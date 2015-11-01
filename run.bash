@@ -30,6 +30,12 @@
 
   email_to="webmaster@example.com"
 
+# exit if curl not installed
+if ! $(command -v curl >/dev/null 2>&1); then
+  echo "curl required, please install and try again"
+  exit 1
+fi
+
 # move to working directory
 cd $( dirname "${BASH_SOURCE[0]}" )
 
