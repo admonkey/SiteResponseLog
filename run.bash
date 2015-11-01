@@ -17,7 +17,7 @@
   site="example.com"
   
   # see man curl --writeout for more options
-  curl_options=( "http_code" "time_total" )
+  curl_options=( "http_code" "time_total" "size_download" )
   
   # log length 
   # example: 300 entries = 50 hours @ 1 every 10 minutes
@@ -99,9 +99,9 @@ html_table_header="$html_table_header</tr></thead><tbody>"
 html="$html</tr>"
 
 # prepend log file with last "log_length" entries
-# TODO: footer info with column names to script matching validation
 
   # plain text
+  # TODO: validate column match
   log=""
   if $log_text; then
     if [ -f $site.log.txt ]; then
@@ -114,8 +114,17 @@ html="$html</tr>"
   log=""
   if $log_html; then
     if [ -f $site.log.html ]; then
-      # remove header, footer, and pick top "log_length" of records
-      log=$(tail -n +2 $site.log.html | head -n -1 | head -$log_length)
+      # validate matching header
+      if [[ $html_table_header == $(head -1 $site.log.html) ]]; then
+	# remove header, footer, and pick top "log_length" of records
+	log=$(tail -n +2 $site.log.html | head -n -1 | head -$log_length)
+      else
+	echo "WARNING: operation will overwrite existing html table with new columns"
+	rm -i $site.log.html
+	if [ -f $site.log.html ]; then
+	  exit 0
+	fi
+      fi
     fi
     (echo $html_table_header && echo $html && echo $log) > $site.log.html
     echo "</tbody></table>" >> $site.log.html
