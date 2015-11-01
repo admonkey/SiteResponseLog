@@ -117,7 +117,7 @@ html="$html</tr>"
       # validate matching header
       if [[ $html_table_header == $(head -1 $site.log.html) ]]; then
 	# remove header, footer, and pick top "log_length" of records
-	log=$(tail -n +2 $site.log.html | head -n -1 | head -$log_length)
+	log=$(tail -n +2 "$site.log.html" | head -n -1 | head -$log_length)
       else
 	echo "WARNING: operation will overwrite existing html table with new columns"
 	rm -i $site.log.html
@@ -126,7 +126,7 @@ html="$html</tr>"
 	fi
       fi
     fi
-    (echo $html_table_header && echo $html && echo $log) > $site.log.html
+    (echo "$html_table_header" && echo "$html" && echo "$log") > $site.log.html
     echo "</tbody></table>" >> $site.log.html
   fi
 
