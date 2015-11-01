@@ -17,7 +17,7 @@
   site="example.com"
   
   # see man curl --writeout for more options
-  curl_options=( "http_code" "time_total" "size_download" )
+  curl_options=( "http_code" "time_total" )
   
   # log length 
   # example: 300 entries = 50 hours @ 1 every 10 minutes
@@ -56,6 +56,7 @@ result_string=$(curl -sL -w "$curl_opts\\n" "$site" -o /dev/null)
 # time stamp
 text=$(date +"%Y-%m-%d %H:%M:%S")
 html="<tr><td>"$text"</td>"
+text=$text$'\t'
 
 # split result into array
 IFS=' ' read -a result_array <<< "${result_string}"
@@ -64,6 +65,7 @@ IFS=' ' read -a result_array <<< "${result_string}"
 index=0
 cols=""
 vals=""
+text_header="timestamp"$'\t\t'
 html_table_header="<table border=1><thead><tr><th>timestamp</th>"
 for value in "${result_array[@]}"
 do
@@ -85,7 +87,8 @@ do
 	  fi
 	
 	# plain text
-	text="$text"$'\t'"$value"
+	text_header="$text_header""${curl_options[$index]}"$'\t'
+	text="$text""$value"$'\t\t'
 
 	# html
 	html_table_header="$html_table_header<th>${curl_options[$index]}</th>"
@@ -101,13 +104,22 @@ html="$html</tr>"
 # prepend log file with last "log_length" entries
 
   # plain text
-  # TODO: validate column match
   log=""
   if $log_text; then
     if [ -f $site.log.txt ]; then
-      log=$(head -$log_length $site.log.txt)
+      # validate matching header
+      if [[ $text_header == $(head -1 $site.log.txt) ]]; then
+	# remove header and pick top "log_length" of records
+	log=$(tail -n +2 "$site.log.txt" | head -$log_length )
+      else
+	echo "WARNING: operation will overwrite existing text log with new columns"
+	rm -i $site.log.txt
+	if [ -f $site.log.txt ]; then
+	  exit 0
+	fi
+      fi
     fi
-    (echo "$text" && echo "$log") > $site.log.txt
+    (echo "$text_header" && echo "$text" && echo "$log") > $site.log.txt
   fi
 
   # html table
