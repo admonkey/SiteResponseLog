@@ -64,6 +64,7 @@ IFS=' ' read -a result_array <<< "${result_string}"
 index=0
 cols=""
 vals=""
+html_table_header="<table border=1><thead><tr><th>timestamp</th>"
 for value in "${result_array[@]}"
 do
 	# sql add comma between values
@@ -87,19 +88,21 @@ do
 	text="$text"$'\t'"$value"
 
 	# html
+	html_table_header="$html_table_header<th>${curl_options[$index]}</th>"
 	html="$html<td>$value</td>"
 
 	((index++))
 done
 
 # end of row data
+html_table_header="$html_table_header</tr></thead><tbody>"
 html="$html</tr>"
 
 # prepend log file with last "log_length" entries
 # TODO: footer info with column names to script matching validation
-  log=""
 
   # plain text
+  log=""
   if $log_text; then
     if [ -f $site.log.txt ]; then
       log=$(head -$log_length $site.log.txt)
@@ -108,11 +111,14 @@ html="$html</tr>"
   fi
 
   # html table
+  log=""
   if $log_html; then
     if [ -f $site.log.html ]; then
-      log=$(head -$log_length $site.log.html)
+      # remove header, footer, and pick top "log_length" of records
+      log=$(tail -n +2 $site.log.html | head -n -1 | head -$log_length)
     fi
-    (echo "$html" && echo "$log") > $site.log.html
+    (echo $html_table_header && echo $html && echo $log) > $site.log.html
+    echo "</tbody></table>" >> $site.log.html
   fi
 
 # insert record into database
