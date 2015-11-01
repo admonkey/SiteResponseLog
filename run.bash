@@ -1,5 +1,5 @@
 #!/bin/bash
-# script in development to check website repsonse statistics
+# script in development to check website response statistics
 
 # reporting options
   log_text=true
