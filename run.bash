@@ -55,7 +55,7 @@ for option in ${curl_options[@]}; do
 done
 
 # ping server
-result_string=$(curl -u $site_username:$site_password -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
+result_string=$(curl -u $site_username:$site_password --max-time 20 -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
 
 # time stamp
 text=$(date +"%Y-%m-%d %H:%M:%S")
