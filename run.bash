@@ -14,7 +14,9 @@
   notify_email_html=true
 
 # environment variables
+  # site must be root server name only. no protocol. no file. no slashes.
   site="example.com"
+  site_protocol="http://"
   
   # see man curl --writeout for more options
   curl_options=( "http_code" "time_total" )
@@ -51,7 +53,7 @@ for option in ${curl_options[@]}; do
 done
 
 # ping server
-result_string=$(curl -sL -w "$curl_opts\\n" "$site" -o /dev/null)
+result_string=$(curl -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
 
 # time stamp
 text=$(date +"%Y-%m-%d %H:%M:%S")
