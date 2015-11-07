@@ -17,6 +17,8 @@
   # site must be root server name only. no protocol. no file. no slashes.
   site="example.com"
   site_protocol="http://"
+  site_username="user"
+  site_password="C0mpl3xP@55w0rd"
   
   # see man curl --writeout for more options
   curl_options=( "http_code" "time_total" )
@@ -53,7 +55,7 @@ for option in ${curl_options[@]}; do
 done
 
 # ping server
-result_string=$(curl -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
+result_string=$(curl -u $site_username:$site_password -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
 
 # time stamp
 text=$(date +"%Y-%m-%d %H:%M:%S")
