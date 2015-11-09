@@ -1,0 +1,5 @@
+<Files run.bash>
+  order allow,deny
+  deny from all
+  require all denied
+</Files>
