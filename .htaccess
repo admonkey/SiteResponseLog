@@ -1,5 +1,5 @@
-<Files run.bash>
+<FilesMatch run.bash|credentials.bash>
   order allow,deny
   deny from all
   require all denied
-</Files>
+</FilesMatch>
