@@ -14,7 +14,6 @@
   notify_email_html=true
 
 # environment variables
-  # site must be root server name only. no protocol. no file. no slashes.
   site="example.com"
   site_protocol="http://"
   site_username="user"
@@ -56,6 +55,10 @@ done
 
 # ping server
 result_string=$(curl -u $site_username:$site_password --max-time 20 -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
+
+# replace illegal "/" characters with "-" in site name for log files
+slash="/"
+site="${site//$slash/-}"
 
 # time stamp
 text=$(date +"%Y-%m-%d %H:%M:%S")
