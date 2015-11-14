@@ -54,7 +54,7 @@ for option in ${curl_options[@]}; do
 done
 
 # ping server
-result_string=$(curl -u $site_username:$site_password --max-time 20 -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
+result_string=$(curl -u $site_username:$site_password --max-time 30 -skL -w "$curl_opts\\n" $site_protocol$site -o /dev/null)
 
 # replace illegal "/" characters with "-" in site name for log files
 slash="/"
